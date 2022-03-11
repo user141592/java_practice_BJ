@@ -1,0 +1,157 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+
+class Main{
+
+	public static void main(String[] args) {
+		List<Integer>deck = new ArrayList<Integer>();
+		for(int i=1;i<=52;i++){
+			deck.add(i);
+		}
+		
+		List<Integer>playerHand = new ArrayList<Integer>();
+		List<Integer>computerHand = new ArrayList<Integer>();
+		Scanner scan = new Scanner(System.in);
+		
+		Collections.shuffle(deck);
+		
+		draw(playerHand,deck);
+		draw(playerHand,deck);
+		draw(computerHand,deck);
+		draw(computerHand,deck);
+		
+		while(getScore(playerHand) < 22){
+			System.out.println("=========================");
+			System.out.println("コンピュータの手札");
+			printComputerHand(computerHand);
+			System.out.println("-------------------------");
+			System.out.println("あなたの手札");
+			printHand(playerHand);
+			System.out.println(getScore(playerHand));
+			System.out.println("=========================");
+			System.out.println("もう一枚引きますか？");
+			System.out.print("Y(引く) or N(引かない) :");
+			String hit = scan.next();
+			if(hit.equals("Y")) {
+				draw(playerHand,deck);
+			}else if(hit.equals("N")) {
+				break;
+			}else {
+				System.out.print("Y or Nで答えてください");
+			}
+			if(getScore(playerHand) == 21) {
+				break;
+			}
+		} 
+		
+		if(getScore(playerHand)<22) {
+			while(getScore(computerHand) < 20) {
+					draw(computerHand,deck);
+			}
+		}
+		System.out.println("===========結果============");
+		System.out.println("コンピュータの手札");
+		printHand(computerHand);
+		System.out.println(getScore(computerHand));
+		if(getScore(computerHand)==21) {
+			System.out.println("Black Jack!!");
+		}
+		System.out.println("-------------------------");
+		System.out.println("あなたの手札");
+		printHand(playerHand);
+		System.out.println(getScore(playerHand));
+		if(getScore(playerHand)==21) {
+			System.out.println("Black Jack!!");
+		}
+		System.out.println("=========================");
+		if(getScore(playerHand)>21) {
+			System.out.println("あなたはバーストしました");
+			System.out.println("あなたの負け");
+		}else if(getScore(playerHand)>getScore(computerHand)){
+			System.out.println("あなたの勝ち");
+		}else if(getScore(playerHand)<getScore(computerHand)){
+			if(getScore(computerHand)<=21) {
+				System.out.println("あなたの負け");
+			}else {
+				System.out.println("コンピュータはバーストしました");
+				System.out.println("あなたの勝ち");
+			}
+		}else {
+			System.out.println("引き分け");
+		}
+	}
+	public static int getScore(List<Integer> hand) {
+		int score=0;
+		for(int i = 0;i+1<=hand.size();i++) {
+			if((hand.get(i)+3)/4 >= 10) {
+				score += 10;
+			}else if((hand.get(i)+3)/4 >= 2 && (hand.get(i)+3)/4 <= 9){
+				score += (hand.get(i)+3)/4;
+			}
+		}
+		for(int i = 0;i+1<=hand.size();i++) {
+			if((hand.get(i)+3)/4 == 1) {
+				if(score <= 10) {
+					score += 11;
+				}else {
+					score += 1;
+				}
+			}
+		}
+		return score;
+	}
+	public static void printComputerHand(List<Integer> hand){
+	  System.out.print("|■■|");
+		for(int i=1;i+1<=hand.size();i++){
+	      int handCard = hand.get(i);
+	      printCard(handCard);
+	    }
+	    System.out.println();
+	}
+	public static void printCard(int card){
+	    System.out.print("|");
+	    if(card!=0){
+	      if(card%4==1){
+	        System.out.print("♠");
+	      }else if(card%4==2){
+	        System.out.print("♦");
+	      }else if(card%4==3){
+	        System.out.print("♣");
+	      }else if(card%4==0){
+	        System.out.print("♥");
+	      }
+	     if((card+3)/4 == 1){
+	        System.out.print("A");
+	      }else if((card+3)/4 == 11){
+	       System.out.print("J");
+	      }else if((card+3)/4 == 12){
+	       System.out.print("Q");
+	      }else if((card+3)/4 == 13){
+	       System.out.print("K");
+	      }else{
+	      System.out.print((card+3)/4);
+	      }
+	    }else{
+	      System.out.print("JOKER");
+	    }
+	    System.out.print("|");
+	  }
+	public static void printHand(List<Integer> hand){
+	    for(int i=0;i+1<=hand.size();i++){
+	      int handCard = hand.get(i);
+	      printCard(handCard);
+	    }
+	    System.out.println();
+	  }
+	public static void draw(List<Integer> hand, List<Integer> deck) {
+	  int drawCard;
+		int deckRemaining = deck.size();
+		deckRemaining --;
+		drawCard = deck.get(deckRemaining);
+		deck.remove(deckRemaining);
+		hand.add(drawCard);
+	}
+	
+}
